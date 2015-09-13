@@ -1,0 +1,68 @@
+setwd("/Users/CandiedCode/Documents/Code/Coursera/DataScience/ExploringData/ExData_Plotting1")
+
+#data <- read.table("household_power_consumption.txt", sep = ";", header = T, na.strings = "?")
+file <- file("household_power_consumption.txt")
+
+##Date: Date in format dd/mm/yyyy
+#We will only be using data from the dates 2007-02-01 and 2007-02-02. 
+#so pattern would be start 1 or 2 /2/2007
+data <- read.table(text = grep("^[1,2]/2/2007", readLines(file), value = TRUE), col.names = c("Date", "Time", "Global_active_power", "Global_reactive_power", "Voltage", "Global_intensity", "Sub_metering_1", "Sub_metering_2", "Sub_metering_3"), sep = ";", header = TRUE, na.strings = "?")
+
+#lets fix the date
+#https://stat.ethz.ch/R-manual/R-devel/library/base/html/strptime.html
+data$Datetime <- strptime(paste(data$Date, data$Time), "%d/%m/%Y %H:%M:%S")
+
+#Plot4 
+#https://stat.ethz.ch/R-manual/R-devel/library/graphics/html/hist.html
+
+#http://www.inside-r.org/r-doc/graphics/par
+par(mfcol = c(2, 2))
+
+# plot 1 - upper left
+plot(data$Datetime
+     , data$Global_active_power
+     , type = "l"
+     , ylab = "Global Active Power", 
+     xlab = "")
+
+
+# plot 2 - lower left
+plot(data$Datetime
+     , data$Sub_metering_1
+     , type = "l"
+     , xlab = ""
+     , ylab = "Energy sub metering")
+
+points(data$Datetime
+       , data$Sub_metering_2
+       , type = "l"
+       , xlab = ""
+       , ylab = "Energy sub metering"
+       , col = "red")
+
+points(data$Datetime
+       , data$Sub_metering_3
+       , type = "l"
+       , xlab = ""
+       , ylab = "Energy sub metering"
+       , col = "blue")
+
+legend("topright"
+       , lty = 1
+       , col = c("black", "red", "blue")
+       , legend = c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"))
+
+#plot 3
+plot(data$Datetime
+     , data$Voltage
+     , type = "l",
+     ylab = "Voltage"
+     , xlab = "datetime")
+
+#plot 4
+plot(data$Datetime
+     , data$Global_reactive_power
+     , type = "l"
+     , xlab = "datetime", 
+     ylab = "Global_reactive_power"
+     , ylim = c(0, 0.5))
